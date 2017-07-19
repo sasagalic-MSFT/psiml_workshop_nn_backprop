@@ -23,25 +23,23 @@ class IdentityActivation(object):
     """ Class that implements identity activation function (y = x). """
     def forward(self, preactivation):
         """ Implements forward pass. Since identity just returns preactivation as is. """
-        # TODO: Replace dummy implementation below with identity forward pass.
-        return numpy.zeros(preactivation.shape, dtype=numpy.float)
+        return preactivation
 
     def backward(self, activation, output_grad):
         """ Implements backward pass. Since identity activation derivative is array of 1s (y = x => dy/dx = 1). """
-        # TODO: Replace dummy implementation below with identity backward pass.
-        return numpy.zeros(activation.shape, dtype=numpy.float)
+        activation_derivative = numpy.ones(activation.shape, dtype=numpy.float)
+        return numpy.multiply(output_grad, activation_derivative)
 
 class TanhActivation(object):
     """ Class that implements tanh activation function (y = tanh(x)). """
     def forward(self, preactivation):
         """ Implements forward pass. Apply tanh to preactivation and return it. """
-        # TODO: Replace dummy implementation below with tanh forward pass.
-        return numpy.zeros(preactivation.shape, dtype=numpy.float)
+        return numpy.tanh(preactivation)
 
     def backward(self, activation, output_grad):
         """ Implements backward pass (y = tanh(x) => dy/dx = (1 - tanh^2(x)). """
-        # TODO: Replace dummy implementation below with tanh backward pass.
-        return numpy.zeros(activation.shape, dtype=numpy.float)
+        activation_derivative = numpy.ones(activation.shape, dtype=numpy.float) - numpy.square(activation)
+        return numpy.multiply(output_grad, activation_derivative)
 
 class SoftmaxWithCrossEntropyLayer(object):
     """ Class that implements softmax + cross-entropy functionality. """
@@ -65,7 +63,10 @@ class SoftmaxWithCrossEntropyLayer(object):
         :param x_input: Input array for this layer.
         """
         # Calculate output as softmax of inputs.
-        # TODO: Implement softmax below as [y_output] = softmax([x_input]).
+        exp = numpy.exp(x_input)
+        assert not numpy.isinf(exp).any()
+        norm = sum(exp)
+        self.y_output = exp / norm
         # Save the most probable class.
         self.y_max = numpy.argmax(self.y_output)
 
@@ -76,7 +77,8 @@ class SoftmaxWithCrossEntropyLayer(object):
         :param target: Expected output (to be used in loss function).
         """
         # Gradients are calculated using [gradient] = [output] - [target].
-        # TODO: Implement softmax + crossentropy backward compute below as [gradient] = [output] - [target].
+        self.input_gradients = numpy.copy(self.y_output)
+        self.input_gradients[target, 0] -= 1
 
     def prediction(self):
         """ Returns the most probably class for the most recent forward call. """
@@ -123,8 +125,10 @@ class FullyConnectedLayer(object):
 
         :param x_input: Input array for forward pass.
         """
-        # TODO: Implement fully connected layer forward compute below as
-        # [output] = activation([weights] * [input] + [bias]).
+        # First calculate preactivation as [preactivation] = [weights] * [input] + [bias]
+        preactivation = numpy.dot(self.w_weights, x_input) + self.b_biases
+        # Now apply activation function on preactivation to obtain output ([output] = activation([preactivation])).
+        self.y_output = self.activation.forward(preactivation)
         # Remember input to be able to compute gradients with respect to weights.
         self.x_input = x_input
 
@@ -137,7 +141,9 @@ class FullyConnectedLayer(object):
         # Calculate preactivation gradients.
         pre_activation_gradient = self.activation.backward(self.y_output, output_grad)
         # Based on preactivation gradient calculate bias, weights and input gradients.
-        # TODO: Implement fully connected layer backward. Compute bias_gradients, weight_gradients and input_gradients.
+        self.bias_gradients = pre_activation_gradient
+        self.weight_gradients = numpy.dot(pre_activation_gradient, numpy.transpose(self.x_input))
+        self.input_gradients = numpy.dot(numpy.transpose(self.w_weights), pre_activation_gradient)
 
     def update_weights(self, alpha):
         """
