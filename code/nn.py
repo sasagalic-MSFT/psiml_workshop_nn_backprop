@@ -23,24 +23,24 @@ class IdentityActivation(object):
     """ Class that implements identity activation function (y = x). """
     def forward(self, preactivation):
         """ Implements forward pass. Since identity just returns preactivation as is. """
-        # TODO: Replace dummy implementation below with identity forward pass.
+        # TODO: Replace dummy implementation below with identity forward pass as [activation]=[preactivation].
         return numpy.zeros(preactivation.shape, dtype=numpy.float)
 
     def backward(self, activation, output_grad):
         """ Implements backward pass. Since identity activation derivative is array of 1s (y = x => dy/dx = 1). """
-        # TODO: Replace dummy implementation below with identity backward pass.
+        # TODO: Replace dummy implementation below with identity backward pass [preactivation_grad] = [output_grad]*[1].
         return numpy.zeros(activation.shape, dtype=numpy.float)
 
 class TanhActivation(object):
     """ Class that implements tanh activation function (y = tanh(x)). """
     def forward(self, preactivation):
         """ Implements forward pass. Apply tanh to preactivation and return it. """
-        # TODO: Replace dummy implementation below with tanh forward pass.
+        # TODO: Replace dummy implementation below with tanh forward pass as [activation] = tanh[preactivation]
         return numpy.zeros(preactivation.shape, dtype=numpy.float)
 
     def backward(self, activation, output_grad):
         """ Implements backward pass (y = tanh(x) => dy/dx = (1 - tanh^2(x)). """
-        # TODO: Replace dummy implementation below with tanh backward pass.
+        # TODO: Replace dummy implementation below with tanh backward pass as [preactivation_grad]=[output_grad]*([1] - [activation]^2).
         return numpy.zeros(activation.shape, dtype=numpy.float)
 
 class SoftmaxWithCrossEntropyLayer(object):
@@ -137,7 +137,10 @@ class FullyConnectedLayer(object):
         # Calculate preactivation gradients.
         pre_activation_gradient = self.activation.backward(self.y_output, output_grad)
         # Based on preactivation gradient calculate bias, weights and input gradients.
-        # TODO: Implement fully connected layer backward. Compute bias_gradients, weight_gradients and input_gradients.
+        # TODO: Implement fully connected layer backward. Compute bias_gradients, weight_gradients and input_gradients as
+        # [bias_grad] = [preactiv_grad]
+        # [weights_grad] = [preactiv_grad]*[input]^T
+        # [input_grad] = [weights]^T*[preactiv_grad].
 
     def update_weights(self, alpha):
         """
