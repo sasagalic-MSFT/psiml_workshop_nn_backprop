@@ -65,7 +65,7 @@ class SoftmaxWithCrossEntropyLayer(object):
         :param x_input: Input array for this layer.
         """
         # Calculate output as softmax of inputs.
-        # TODO: Implement softmax below as [y_output] = softmax([x_input]).
+        # TODO: Implement softmax below.
         # Save the most probable class.
         self.y_max = numpy.argmax(self.y_output)
 
@@ -76,7 +76,7 @@ class SoftmaxWithCrossEntropyLayer(object):
         :param target: Expected output (to be used in loss function).
         """
         # Gradients are calculated using [gradient] = [output] - [target].
-        # TODO: Implement softmax + crossentropy backward compute below as [gradient] = [output] - [target].
+        # TODO: Implement softmax + crossentropy backward compute below.
 
     def prediction(self):
         """ Returns the most probably class for the most recent forward call. """
@@ -123,8 +123,7 @@ class FullyConnectedLayer(object):
 
         :param x_input: Input array for forward pass.
         """
-        # TODO: Implement fully connected layer forward compute below as
-        # [output] = activation([weights] * [input] + [bias]).
+        # TODO: Implement fully connected layer forward compute below.
         # Remember input to be able to compute gradients with respect to weights.
         self.x_input = x_input
 
